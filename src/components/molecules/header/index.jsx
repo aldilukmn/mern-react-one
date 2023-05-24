@@ -1,8 +1,30 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Navigation } from "../../atoms";
+import { useCookies } from "react-cookie";
+import Swal from "sweetalert2";
 
 const Header = () => {
   const location = useLocation();
+  const [cookies, setCookies] = useCookies(["access_token"]);
+  const navigate = useNavigate();
+
+  const logout = () => {
+    Swal.fire({
+      title: "Do you want to logout?",
+      confirmButtonText: "Yes",
+      confirmButtonColor: "#0d6efd",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setCookies("access_token", "");
+        window.localStorage.removeItem("userId");
+        navigate("/login");
+      } else if (result.isDenied) {
+        Swal.fire("Changes are not saved", "", "info");
+      }
+    });
+  };
 
   return (
     <header>
@@ -15,16 +37,24 @@ const Header = () => {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div className="navbar-nav">
-              <Link className={`nav-link ${location.pathname === "/" ? "active" : ""}`} aria-current="page" to={"/"}>
-                Home
-              </Link>
-              <Link className={`nav-link ${location.pathname === "/login" ? "active" : ""}`} to={"/login"}>
-                Login
-              </Link>
-              <Link className={`nav-link ${location.pathname === "/register" ? "active" : ""}`} to={"/register"}>
-                Register
-              </Link>
+            <div className="navbar-nav ms-auto">
+              {!cookies.access_token ? (
+                <>
+                  <Link className={`nav-link ${location.pathname === "/login" ? "active" : ""}`} to={"/login"}>
+                    <Navigation title={"Login"} />
+                  </Link>
+                  <Link className={`nav-link ${location.pathname === "/register" ? "active" : ""}`} to={"/register"}>
+                    <Navigation title={"Register"} />
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link className={`nav-link ${location.pathname === "/" ? "active" : ""}`} to={"/"}>
+                    <Navigation title={"Home"} />
+                  </Link>
+                  <Navigation title={"Logout"} className="nav-link" style={{ cursor: "pointer" }} onClick={logout} />
+                </>
+              )}
             </div>
           </div>
         </div>

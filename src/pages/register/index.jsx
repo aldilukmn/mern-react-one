@@ -1,23 +1,41 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const message = (icon, title) => {
+    Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    }).fire({
+      icon: icon,
+      title: title
+    });
+  }
+
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:3001/v1/auth/register", { username, password });
       const responseData = response.data;
-      alert(responseData.message);
+      message("success", responseData.message);
       navigate("/login");
     } catch (err) {
       if (err.response) {
         const errData = err.response.data;
-        alert(errData.message);
+        message("error", errData.message);
       } else {
         console.log(err);
       }
