@@ -3,7 +3,7 @@ import React from 'react'
 const HomeButton = ({title, ...rest}) => {
   return (
     <>
-        <a {...rest}>{title}</a>
+        <p className='m-0' {...rest}>{title}</p>
     </>
   )
 }

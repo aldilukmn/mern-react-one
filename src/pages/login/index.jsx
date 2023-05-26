@@ -1,13 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useCookies } from "react-cookie";
+// import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [cookies, setCookies] = useCookies(["access_token"]);
+  // const [cookies, setCookies] = useCookies(["access_token"]);
   const navigate = useNavigate();
 
   const message = (icon, title) => {
@@ -32,8 +32,8 @@ const Login = () => {
 
     try {
       const response = await axios.post("http://localhost:3001/v1/auth/login", { username, password });
-      setCookies("access_token", response.data.token);
-      window.localStorage.setItem("userId", response.data.userId);
+      // setCookies("access_token", response.data.token);
+      // window.localStorage.setItem("userId", response.data.userId);
       const responseData = response.data;
       message("success", responseData.message);
       navigate("/");
@@ -51,7 +51,7 @@ const Login = () => {
     <div className="container-fluid mt-5">
       <div className="border rounded p-4 shadow-sm mx-auto w-25">
         <h4 className="mb-3 text-center">Login</h4>
-        <form onSubmit={onSubmit} method="post">
+        <form onSubmit={onSubmit}>
           <input type="text" className="form-control mb-3" placeholder="Username" onChange={(e) => setUsername(e.target.value)} value={username} />
           <input type="password" className="form-control mb-3" placeholder="Password" onChange={(e) => setPassword(e.target.value)} value={password} />
           <button className="btn btn-primary w-100" type="submit">
